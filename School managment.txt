@@ -1,0 +1,89 @@
+Schoolmanagment
+
+StandardTeacher
+model
+class StandardsTeacher < ApplicationRecord
+  belongs_to :standard_id
+  belongs_to :teacher_id
+end
+migrate
+class CreateStandardsTeachers < ActiveRecord::Migration[6.0]
+  def change
+    create_table :standards_teachers do |t|
+      t.references :standard_id, null: false, foreign_key: true
+      t.references :teacher_id, null: false, foreign_key: true
+
+      t.timestamps
+    end
+  end
+end
+
+ 
+
+
+Standard
+model
+class Standard < ApplicationRecord
+  has_many :standard_teachers
+  has_many :teachers, through: :standard_teachers
+
+  validates :name, presence: true
+end
+migrate
+class CreateStandards < ActiveRecord::Migration[6.0]
+  def change
+    create_table :standards do |t|
+      t.string :name
+
+      t.timestamps
+    end
+  end
+end
+
+
+
+Student
+model
+class Student < ApplicationRecord
+  belongs_to :standard
+  has_many :teachers, through: :standard
+
+  validates :name, presence: true
+end
+migrate
+class CreateStudents < ActiveRecord::Migration[6.0]
+  def change
+    create_table :students do |t|
+      t.string :name
+      t.decimal :address
+      t.integer :standard_id
+
+      t.timestamps
+    end
+  end
+end
+
+
+
+teacher
+model
+class Teacher < ApplicationRecord
+  has_many :standard_teachers, dependent: :destroy
+  has_many :standards, through: :standard_teachers
+  has_many :students
+
+  validates :name, presence: true
+end
+migrate
+class CreateTeachers < ActiveRecord::Migration[6.0]
+  def change
+    create_table :teachers do |t|
+      t.string :name
+
+      t.timestamps
+    end
+  end
+end
+
+
+
